@@ -1,11 +1,6 @@
 package com.example.calculator_perfected;
 
 import android.app.Application;
-import android.util.Log;
-
-import org.greenrobot.greendao.query.QueryBuilder;
-
-import java.util.List;
 
 public class GreendDAOapp extends Application {
 

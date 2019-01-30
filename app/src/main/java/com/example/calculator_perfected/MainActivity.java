@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    double fn,sn;
+    Double fn,sn;
     String operation;
 
     EditText resultTxt;
@@ -22,18 +22,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button b0,b1,b2,b3,b4,b5,b6,b7,b8,b9;
     int tmp;
     private OperationDao operationDao;
-    private GreendDAOapp greendDAOapp;
     private DaoSession daoSession;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         setUIView();
         daoSession = ((GreendDAOapp) getApplication()).getDaoSession();
         operationDao = daoSession.getOperationDao();
         initTmp();
+
         bClear.setOnClickListener(this);
         bback.setOnClickListener(this);
         bHistoriq.setOnClickListener(this);
@@ -89,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else return 0;
     }
 
+    public String historique(){
+        List<Operation> operations = operationDao.loadAll();
+        if(tmp > 1){
+            tmp --;
+            return operations.get(tmp-1).getOperation() +"";
+        }
+        else return "";
+    }
+
 
 
     @Override
@@ -129,66 +138,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 resultTxt.setText("");
                 break;
             case R.id.back:
-                StringBuilder stringBuilder = new StringBuilder(string);
-                stringBuilder.deleteCharAt(string.length()-1);
-                resultTxt.setText(stringBuilder);
+                if (!string.equals("")){
+                    StringBuilder stringBuilder = new StringBuilder(string);
+                    stringBuilder.deleteCharAt(string.length()-1);
+                    resultTxt.setText(stringBuilder);
+                }
                 break;
             case R.id.division:
-                operation = "/";
-                fn = Double.parseDouble(resultTxt.getText().toString());
-                resultTxt.setText("");
+                if (!resultTxt.getText().toString().equals("")){
+                    operation = "/";
+                    fn = Double.parseDouble(resultTxt.getText().toString());
+                    resultTxt.setText("");
+                }
                 break;
             case R.id.multiplication:
-                operation = "*";
-                fn = Double.parseDouble(resultTxt.getText().toString());
-                resultTxt.setText("");
+                if (!resultTxt.getText().toString().equals("")){
+                    operation = "*";
+                    fn = Double.parseDouble(resultTxt.getText().toString());
+                    resultTxt.setText("");
+                }
                 break;
             case R.id.soustraction:
-                operation = "-";
-                fn = Double.parseDouble(resultTxt.getText().toString());
-                resultTxt.setText("");
+                if (!resultTxt.getText().toString().equals("")){
+                    operation = "-";
+                    fn = Double.parseDouble(resultTxt.getText().toString());
+                    resultTxt.setText("");
+                }
                 break;
             case R.id.addition:
-                operation = "+";
-                fn = Double.parseDouble(resultTxt.getText().toString());
-                resultTxt.setText("");
+                if (!resultTxt.getText().toString().equals("")){
+                    operation = "+";
+                    fn = Double.parseDouble(resultTxt.getText().toString());
+                    resultTxt.setText("");
+                }
                 break;
             case R.id.plusoumoins:
-                resultTxt.setText(Double.parseDouble(resultTxt.getText().toString())*(-1)+"");
+                if (!resultTxt.getText().toString().equals("")){
+                    resultTxt.setText(Double.parseDouble(resultTxt.getText().toString())*(-1)+"");
+                }
+                break;
+            case R.id.historiq:
+                resultTxt.setText( historique() );
                 break;
             case R.id.egale:
-                sn = Double.parseDouble(resultTxt.getText().toString());
-                double result=0.0;
-            case R.id.historiq:
-                resultTxt.setText("222");
-                switch (operation){
-                    case "+":
-                        result = fn+sn;
-                        resultTxt.setText(result+"");
-                        operationDao.insert(new Operation(result));
-                        break;
-                    case "-":
-                        result = fn-sn;
-                        resultTxt.setText(result+"");
-                        operationDao.insert(new Operation(result));
-                        break;
-                    case "*":
-                        result = fn*sn;
-                        resultTxt.setText(result+"");
-                        operationDao.insert(new Operation(result));
-                        break;
-                    case "/":
-                        if(sn==0){
-                            Toast.makeText(MainActivity.this, "Ne peut pas diviser par zéro", Toast.LENGTH_LONG).show();
-                            resultTxt.setText("Erreur!");
-                        }
-                        else {
-                            result = fn/sn;
+                if (fn != null){
+                    initTmp();
+                    sn = Double.parseDouble(resultTxt.getText().toString());
+                    double result=0.0;
+                    switch (operation){
+                        case "+":
+                            result = fn+sn;
                             resultTxt.setText(result+"");
                             operationDao.insert(new Operation(result));
-                        }
-                        break;
-                    default: resultTxt.setText(sn+""); break;
+                            break;
+                        case "-":
+                            result = fn-sn;
+                            resultTxt.setText(result+"");
+                            operationDao.insert(new Operation(result));
+                            break;
+                        case "*":
+                            result = fn*sn;
+                            resultTxt.setText(result+"");
+                            operationDao.insert(new Operation(result));
+                            break;
+                        case "/":
+                            if(sn==0){
+                                Toast.makeText(MainActivity.this, "Ne peut pas diviser par zéro", Toast.LENGTH_LONG).show();
+                                resultTxt.setText("Erreur!");
+                            }
+                            else {
+                                result = fn/sn;
+                                resultTxt.setText(result+"");
+                                operationDao.insert(new Operation(result));
+                            }
+                            break;
+                        default: resultTxt.setText(sn+""); break;
+                    }
+
                 }
                 break;
             case R.id.point:
